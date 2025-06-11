@@ -1,3 +1,4 @@
+table.insert(controls,{Name = "code",ControlType = "Text",PinStyle = "Input",Count = 1})
 ButtonType = {
   "Momentary",
   "Momentary",

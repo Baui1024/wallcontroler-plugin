@@ -83,6 +83,7 @@ end
 -- Defines the Controls used within the plugin
 function GetControls(props)
   local ctrls = {}
+  table.insert(ctrls,)
   --[[ #include "controls.lua" ]]
   return ctrls
 end
@@ -91,6 +92,7 @@ end
 function GetControlLayout(props)
   local layout = {}
   local graphics = {}
+  layout["code"] = {PrettyName = "Code",Style = "None"}
   --[[ #include "layout.lua" ]]
   return layout, graphics
 end
