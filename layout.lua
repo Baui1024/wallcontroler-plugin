@@ -23,8 +23,10 @@ ButtonType = {
   "Momentary",
 }
 
-if props["Operation Mode"].Value == "Raw" then
-
+if props["Operation Mode"].Value == "Individual" then
+  for i = 1, #ButtonType do
+    ButtonType[i] = props["Button " .. i .. " Mode"].Value
+  end
 elseif props["Operation Mode"].Value == "Predefined Top/Bottom" then
   if props["Top Buttons Mode"].Value == "Radio Buttons" then
     ButtonType[1] = "Toggle"
@@ -54,27 +56,27 @@ elseif props["Operation Mode"].Value == "Predefined Left/Right" then
   if props["Left Buttons Mode"].Value == "Radio Buttons" then
       ButtonType[1] = "Toggle"
       ButtonType[3] = "Toggle"
-    elseif props["Top Buttons Mode"].Value == "Individual" then
-      for i = 1, 3, 2 do
-        if props["Button " .. i .. " Mode"].Value == "Trigger" then
-          ButtonType[i] = "Trigger"
-        elseif props["Button " .. i .. " Mode"].Value == "Toggle" then
-          ButtonType[i] = "Toggle"
-        end
+  elseif props["Left Buttons Mode"].Value == "Individual" then
+    for i = 1, 3, 2 do
+      if props["Button " .. i .. " Mode"].Value == "Trigger" then
+        ButtonType[i] = "Trigger"
+      elseif props["Button " .. i .. " Mode"].Value == "Toggle" then
+        ButtonType[i] = "Toggle"
       end
     end
-    if props["Bottom Buttons Mode"].Value == "Radio Buttons" then
-      ButtonType[2] = "Toggle"
-      ButtonType[4] = "Toggle"
-    elseif props["Bottom Buttons Mode"].Value == "Individual" then
-      for i = 2, 4, 2 do
-        if props["Button " .. i .. " Mode"].Value == "Trigger" then
-          ButtonType[i] = "Trigger"
-        elseif props["Button " .. i .. " Mode"].Value == "Toggle" then
-          ButtonType[i] = "Toggle"
-        end
+  end
+  if props["Right Buttons Mode"].Value == "Radio Buttons" then
+    ButtonType[2] = "Toggle"
+    ButtonType[4] = "Toggle"
+  elseif props["Right Buttons Mode"].Value == "Individual" then
+    for i = 2, 4, 2 do
+      if props["Button " .. i .. " Mode"].Value == "Trigger" then
+        ButtonType[i] = "Trigger"
+      elseif props["Button " .. i .. " Mode"].Value == "Toggle" then
+        ButtonType[i] = "Toggle"
       end
     end
+  end
 end
 
 LabelIndexPos = {
@@ -103,7 +105,9 @@ for i = 1, 4 do
     table.insert(graphics,{Type = "Label",Text = "Color On",Color = Black,Font = "Roboto",FontSize = 11,FontStyle = "Regular",HTextAlignment = "Center",Position = {LabelButtonPos[i][1],LabelButtonPos[i][2]+32},Size = {51,20}})
     table.insert(graphics,{Type = "Label",Text = "Color Off",Color = Black,Font = "Roboto",FontSize = 11,FontStyle = "Regular",HTextAlignment = "Center",Position = {LabelButtonPos[i][1],LabelButtonPos[i][2]+52},Size = {51,20}})
     layout["ColorOn"..i] = {PrettyName = "Color On "..i,Style = ColorStyle, TextBoxStyle = "Normal",Margin = 2, CornerRadius = 0,Position = {LabelButtonPos[i][1]+51,LabelButtonPos[i][2]+32},Size = {71,20}}
+    layout["ColorOnIndicator"..i] = {PrettyName = "Color On "..i,Style = "Meter", MeterStyle = "Level",Margin = 2, CornerRadius = 0,Position = {LabelButtonPos[i][1]+51+71,LabelButtonPos[i][2]+32},Size = {20,20}}
     layout["ColorOff"..i] = {PrettyName = "Color Off "..i,Style = ColorStyle, TextBoxStyle = "Normal",Margin = 2, CornerRadius = 0,Position = {LabelButtonPos[i][1]+51,LabelButtonPos[i][2]+52},Size = {71,20}}
+    layout["ColorOffIndicator"..i] = {PrettyName = "Color Off "..i,Style = "Meter", MeterStyle = "Level",Margin = 2, CornerRadius = 0,Position = {LabelButtonPos[i][1]+51+71,LabelButtonPos[i][2]+52},Size = {20,20}}
   else
     table.insert(graphics,{Type = "Label",Text = "Color",Color = Black,Font = "Roboto",FontSize = 11,FontStyle = "Regular",HTextAlignment = "Center",Position =  {LabelButtonPos[i][1],LabelButtonPos[i][2]+32},Size = {51,20}})
     layout["Color"..i] = {PrettyName = "Color "..i,Style = ColorStyle, TextBoxStyle = "Normal",Margin = 2, CornerRadius = 0,Position = {LabelButtonPos[i][1]+51,LabelButtonPos[i][2]+32},Size = {71,20}}

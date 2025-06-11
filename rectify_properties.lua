@@ -1,4 +1,4 @@
-if props["Operation Mode"].Value == "Raw" then
+if props["Operation Mode"].Value == "Individual" then
   props["Top Buttons Mode"].IsHidden = true
   props["Bottom Buttons Mode"].IsHidden = true
   props["Left Buttons Mode"].IsHidden = true

@@ -1,8 +1,8 @@
 table.insert(props, {
   Name = "Operation Mode",
   Type = "enum",
-  Choices = {"Raw", "Predefined Top/Bottom", "Predefined Left/Right"},
-  Value = "Raw"
+  Choices = {"Individual", "Predefined Top/Bottom", "Predefined Left/Right"},
+  Value = "Individual"
 })
 
 table.insert(props, {
@@ -37,8 +37,8 @@ for i = 1, 4 do
   table.insert(props, {
     Name = "Button " .. i .. " Mode",
     Type = "enum",
-    Choices = {"Raw", "Trigger", "Toggle", "Momentary"},
-    Value = "Raw"
+    Choices = {"Momentary", "Trigger", "Toggle"},
+    Value = "Momentary"
   })
 end
 

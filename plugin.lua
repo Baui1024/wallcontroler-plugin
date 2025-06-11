@@ -32,7 +32,7 @@ function GetPrettyName(props)
 end
 
 -- Optional function used if plugin has multiple pages
-PageNames = { "Control", "Setup" }  --List the pages within the plugin
+PageNames = { "Setup" }  --List the pages within the plugin
 function GetPages(props)
   local pages = {}
   --[[ #include "pages.lua" ]]
@@ -83,7 +83,6 @@ end
 -- Defines the Controls used within the plugin
 function GetControls(props)
   local ctrls = {}
-  table.insert(ctrls,)
   --[[ #include "controls.lua" ]]
   return ctrls
 end
@@ -99,5 +98,5 @@ end
 
 --Start event based logic
 if Controls then
-  --[[ #include "runtime.lua" ]]
+  --[[ ##include "runtime.lua" ]]
 end
