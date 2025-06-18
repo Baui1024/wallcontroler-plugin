@@ -137,3 +137,21 @@ table.insert(ctrls, {
   UserPin = true,
   PinStyle = "Both",
 })
+table.insert(ctrls, {
+  Name = "ButtonLock",
+  ControlType = "Button",
+  ButtonType = "Toggle",
+  Count = 1,
+  UserPin = true,
+  PinStyle = "Both",
+})
+table.insert(ctrls, {
+  Name = "Brightness",
+  ControlType = "Knob",
+  ControlUnit = "Percent",
+  Count = 1,
+  Min = 0,
+  Max = 100,
+  UserPin = true,
+  PinStyle = "Both",
+})

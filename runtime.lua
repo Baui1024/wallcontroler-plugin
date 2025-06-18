@@ -1,7 +1,10 @@
 rapidjson = require("rapidjson")
 Controls.Status.Value = 4
 KeepAlive = Timer.New()
-KeepAlive:Start(5)
+KeepAlive:Start(2)
+LockTiming = 0.05
+Lock = false
+SettingLock = false 
 
 Socket = WebSocket.New()
 SocketProtocol = "wss"
@@ -41,6 +44,7 @@ end
 Socket.Connected = function()
   Controls.Status.Value = 0
   Controls.Status.String = "Connected"
+  SyncState() 
 end 
 
 Socket.Closed = function()
@@ -68,33 +72,43 @@ end
 
 Colors = {
   Off         = "#000000",
-  White       = "#FFFFFF",
   Red         = "#FF0000",
   Green       = "#00FF00",
   Blue        = "#0000FF",
   Yellow      = "#FFFF00",
   Cyan        = "#00FFFF",
   Magenta     = "#FF00FF",
-  Gray        = "#808080", 
-  Lightgray   = "#D3D3D3",
-  Darkgray    = "#A9A9A9",
-  Orange      = "#FFA500",
-  Pink        = "#FFC0CB",
-  Purple      = "#800080",
-  Brown       = "#A52A2A",
-  Gold        = "#FFD700",
-  Silver      = "#C0C0C0",
-  Navy        = "#000080",
-  Teal        = "#008080",
-  Olive       = "#808000",
-  Maroon      = "#800000",
-  Lime        = "#BFFF00",
-  Indigo      = "#4B0082",
-  Coral       = "#FF7F50",
-  Turquoise   = "#40E0D0",
-  Violet      = "#EE82EE",
-  Beige       = "#F5F5DC",
+  White       = "#FFFFFF"
 }
+-- Colors = {
+--   Off         = "#000000",
+--   White       = "#FFFFFF",
+--   Red         = "#FF0000",
+--   Green       = "#00FF00",
+--   Blue        = "#0000FF",
+--   Yellow      = "#FFFF00",
+--   Cyan        = "#00FFFF",
+--   Magenta     = "#FF00FF",
+--   Gray        = "#808080", 
+--   Lightgray   = "#D3D3D3",
+--   Darkgray    = "#A9A9A9",
+--   Orange      = "#FFA500",
+--   Pink        = "#FFC0CB",
+--   Purple      = "#800080",
+--   Brown       = "#A52A2A",
+--   Gold        = "#FFD700",
+--   Silver      = "#C0C0C0",
+--   Navy        = "#000080",
+--   Teal        = "#008080",
+--   Olive       = "#808000",
+--   Maroon      = "#800000",
+--   Lime        = "#BFFF00",
+--   Indigo      = "#4B0082",
+--   Coral       = "#FF7F50",
+--   Turquoise   = "#40E0D0",
+--   Violet      = "#EE82EE",
+--   Beige       = "#F5F5DC",
+-- }
 ColorKeys = {}
 
 for key,value in pairs(Colors) do
@@ -109,6 +123,24 @@ for i = 1, 4 do
   end
 end
 
+function SendMultipleColor(i,color,reset)
+  local message = {
+    command = "set_color",
+    led_index = i,
+    color = color
+  }
+  SendMessage(message)
+  if reset then 
+    message = {
+      command = "set_color",
+      led_index = i,
+      color = "#000000"
+    }
+    Timer.CallAfter(function()
+      SendMessage(message)
+    end,reset)
+  end 
+end
 
 function SendColor(i,state,reset)
   local color = ""
@@ -119,19 +151,44 @@ function SendColor(i,state,reset)
   end
   if Properties["Color Mode"].Value == "Pre-defined Options" then 
     color = Colors[color]
-  end 
+  end
+  if Lock then 
+    color = "#ff0000"
+  end  
   local message = {
     command = "set_color",
-    led_index = i,
+    led_index = {i},
     color = color
   }
   SendMessage(message)
+  if reset then 
+    message = {
+      command = "set_color",
+      led_index = {i},
+      color = "#000000"
+    }
+    Timer.CallAfter(function()
+      SendMessage(message)
+    end,reset)
+  end 
   --print("sending color "..color.. " "..i.."", state and "on" or "off" , reset)
+end 
+
+function SyncState()
+  for i = 1, 4 do 
+    ButtonStates(i, 1, true)
+  end 
 end 
 
 function ButtonStates(btn_id, val, internal)
   local individual_button = function(btn_id, val, internal)
     btn = Controls["Button"..btn_id]
+    if Lock then 
+      if not SettingLock then
+        SendMultipleColor({1,2,3,4}, "#ff0000", 0.2)
+      end
+      return 
+    end 
     if Properties["Button "..btn_id.." Mode"].Value == "Trigger" and val == 1 then 
       if not internal then
         btn:Trigger()
@@ -205,12 +262,61 @@ function ButtonStates(btn_id, val, internal)
   end
 end 
 
+ButtonPressed = {
+  false,
+  false,
+  false,
+  false
+}
+
+function SetButtonLock()
+  if not Lock then  
+    Lock = true
+    SettingLock = true 
+    SendMultipleColor({1,2,3,4}, "#ff0000", 0.2)
+    Timer.CallAfter(
+      function()
+        SettingLock = false
+      end,LockTiming*1.2
+    ) 
+  else
+    SettingLock = true 
+    SendMultipleColor({1,2,3,4}, "#00FF00", 0.2)
+    Timer.CallAfter(
+      function()
+        SettingLock = false
+        Timer.CallAfter(function()
+          SyncState() 
+        end,0.2)
+      end,LockTiming*1.2
+    ) 
+    Timer.CallAfter(function() 
+      Lock = false
+    end,LockTiming*1.1)
+  end
+end
+
 ParseData = function(data)
   data = rapidjson.decode(data)
   if data["command"] and data["command"] == "button_press" then 
     local btn_id = data["button_id"]
     local val = data["value"]
-    ButtonStates(btn_id, val)
+    if btn_id == 1 or btn_id == 2 then 
+      if val == 1 then
+        ButtonPressed[btn_id] = true 
+        Timer.CallAfter(function()
+          ButtonPressed[btn_id] = false 
+          ButtonStates(btn_id, val)
+        end,LockTiming)
+        if ButtonPressed[1] and ButtonPressed[2] then
+          SetButtonLock()
+        end
+      else 
+        ButtonStates(btn_id, val)
+      end
+    else
+      ButtonStates(btn_id, val)
+    end
   end 
 end
 

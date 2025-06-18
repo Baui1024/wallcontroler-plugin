@@ -1,5 +1,5 @@
 table.insert(graphics,{Type = "GroupBox",Fill = White,CornerRadius = 0,Position = {0,0},Size = {446,75}})
-table.insert(graphics,{Type = "GroupBox",Fill = Grey,CornerRadius = 0,Position = {11,75},Size = {425,396}})
+table.insert(graphics,{Type = "GroupBox",Fill = Grey,CornerRadius = 0,Position = {11,75},Size = {425,482}})
 table.insert(graphics,{Type = "Header",Text = "Connection & Status",Color = Black,Font = "Roboto",FontSize = 14,FontStyle = "Regular",HTextAlignment = "Center",Position = {42,86},Size = {364,6}})
 table.insert(graphics,{Type = "Label",Text = "IP Address",Fill = Clear,Font = "Roboto",FontSize = 11,HTextAlign = "Right",Position = {108,111},Size = {65,16}})
 layout["IP"] = {PrettyName = "IP Address",Style = "Text",CornerRadius = 0,Margin = 0,Position = {186,111},Size = {153,16}}
@@ -114,3 +114,10 @@ for i = 1, 4 do
   end
   layout["Button"..i] = {PrettyName = "Button "..i,Style = "Button",ButtonStyle = ButtonType[i],Margin = 2, CornerRadius = 0,Position = ButtonPos[i],Size = {71,45}}
 end
+
+
+table.insert(graphics,{Type = "Header",Text = "Extra Controls",Color = Black,Font = "Roboto",FontSize = 14,FontStyle = "Regular",HTextAlignment = "Center",Position = {42,465},Size = {364,6}})
+table.insert(graphics,{Type = "Label",Text = "Button Lock",Color = Black,Font = "Roboto",FontSize = 11,FontStyle = "Regular",HTextAlignment = "Center",Position =  {42,490},Size = {85,20}})
+layout["ButtonLock"] = {PrettyName = "Button Lock",Style = "Button", ButtonStyle = "Toggle",Margin = 2, CornerRadius = 0,Position = {149,490},Size = {40,20}}
+table.insert(graphics,{Type = "Label",Text = "Button Lock",Color = Black,Font = "Roboto",FontSize = 11,FontStyle = "Regular",HTextAlignment = "Center",Position =  {225,490},Size = {85,20}})
+layout["Brightness"] = {PrettyName = "Brightness",Style = "Text", TextBoxStyle = "Normal",Margin = 2, CornerRadius = 0,Position = {351,490},Size = {40,20}}
