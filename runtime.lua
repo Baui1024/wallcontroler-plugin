@@ -1,15 +1,17 @@
 rapidjson = require("rapidjson")
 Controls.Status.Value = 4
-KeepAlive = Timer.New()
+KeepAlive = Timer.New() 
 KeepAlive:Start(2)
 LockTiming = 0.05
-Lock = false
+Lock = Controls.ButtonLock.Boolean
 SettingLock = false 
 
 Socket = WebSocket.New()
 SocketProtocol = "wss"
 SocketUrl = "/"
 SocketPort = 8765
+
+BrightnessFlag = false
 
 KeepAlive.EventHandler = function()
   succ,err = pcall(function() 
@@ -42,6 +44,7 @@ function Connect()
 end 
 
 Socket.Connected = function()
+  print("Connected")
   Controls.Status.Value = 0
   Controls.Status.String = "Connected"
   SyncState() 
@@ -123,6 +126,15 @@ for i = 1, 4 do
   end
 end
 
+function SendBrightness(i, brightness)
+  local message = {
+    command = "set_brightness",
+    led_index = i,
+    brightness = brightness
+  }
+  SendMessage(message)
+end 
+
 function SendMultipleColor(i,color,reset)
   local message = {
     command = "set_color",
@@ -158,7 +170,7 @@ function SendColor(i,state,reset)
   local message = {
     command = "set_color",
     led_index = {i},
-    color = color
+    color = color,
   }
   SendMessage(message)
   if reset then 
@@ -272,6 +284,7 @@ ButtonPressed = {
 function SetButtonLock()
   if not Lock then  
     Lock = true
+    Controls.ButtonLock.Boolean = Lock
     SettingLock = true 
     SendMultipleColor({1,2,3,4}, "#ff0000", 0.2)
     Timer.CallAfter(
@@ -292,6 +305,7 @@ function SetButtonLock()
     ) 
     Timer.CallAfter(function() 
       Lock = false
+      Controls.ButtonLock.Boolean = Lock
     end,LockTiming*1.1)
   end
 end
@@ -386,6 +400,17 @@ function EventHandlers()
     Controls["ColorOn"..i].EventHandler = AssignColors
     Controls["ColorOff"..i].EventHandler = AssignColors
   end 
+  Controls.ButtonLock.EventHandler = SetButtonLock
+  Controls.Brightness.EventHandler = function() 
+    if not BrightnessFlag then
+      SendBrightness({1,2,3,4},Controls.Brightness.Position) 
+      BrightnessFlag = true
+      Timer.CallAfter(function()
+        BrightnessFlag = false
+        SendBrightness({1,2,3,4},Controls.Brightness.Position) 
+      end,0.1)
+    end
+  end
 end 
 
 function Initalize()
