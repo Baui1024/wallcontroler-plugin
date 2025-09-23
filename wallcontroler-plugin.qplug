@@ -6,7 +6,7 @@
 PluginInfo = {
   Name = "Wall Controller",
   Version = "1.0",
-  BuildVersion = "1.0.0.88",
+  BuildVersion = "1.0.0.95",
   Id = "ecb3592b-01c9-4f20-9d34-9f98002e56fc",
   Author = "BBuilds",
   Description = "A very basic plugin"  
@@ -98,7 +98,7 @@ function GetProperties()
   })
   
   table.insert(props, {
-    Name = "Radio Button Interlock Timeout ms On 1",
+    Name = "Radio Button Group Top/Left Interlock Timeout ms Button 1",
     Type = "integer",
     Min = 0,
     Max = 60000,
@@ -106,7 +106,7 @@ function GetProperties()
   })
   
   table.insert(props, {
-    Name = "Radio Button Interlock Timeout ms On 2",
+    Name = "Radio Button Group Top/Left Interlock Timeout ms Button 2",
     Type = "integer",
     Min = 0,
     Max = 60000,
@@ -114,7 +114,7 @@ function GetProperties()
   })
   
   table.insert(props, {
-    Name = "Radio Button Interlock Timeout ms Off 1",
+    Name = "Radio Button Group Bottom/Right Interlock Timeout ms Button 1",
     Type = "integer",
     Min = 0,
     Max = 60000,
@@ -122,7 +122,7 @@ function GetProperties()
   })
   
   table.insert(props, {
-    Name = "Radio Button Interlock Timeout ms Off 2",
+    Name = "Radio Button Group Bottom/Right Interlock Timeout ms Button 2",
     Type = "integer",
     Min = 0,
     Max = 60000,
@@ -130,14 +130,14 @@ function GetProperties()
   })
   
   table.insert(props, {
-    Name = "Radio Button Interlock Blink Top/Left",
+    Name = "Radio Button Group Top/Left Interlock Blink",
     Type = "enum",
     Choices = {"Yes", "No"},
     Value = "No"
   })
   
   table.insert(props, {
-    Name = "Radio Button Interlock Blink Bottom/Right",
+    Name = "Radio Button Group Bottom/Right Interlock Blink",
     Type = "enum",
     Choices = {"Yes", "No"},
     Value = "No"
@@ -203,12 +203,12 @@ end
 
 -- Optional function to update available properties when properties are altered by the user
 function RectifyProperties(props)
-  props["Radio Button Interlock Timeout ms On 1"].IsHidden = true
-  props["Radio Button Interlock Timeout ms On 2"].IsHidden = true
-  props["Radio Button Interlock Timeout ms Off 1"].IsHidden = true
-  props["Radio Button Interlock Timeout ms Off 2"].IsHidden = true
-  props["Radio Button Interlock Blink Top/Left"].IsHidden = true
-  props["Radio Button Interlock Blink Bottom/Right"].IsHidden = true
+  props["Radio Button Group Top/Left Interlock Timeout ms Button 1"].IsHidden = true
+  props["Radio Button Group Top/Left Interlock Timeout ms Button 2"].IsHidden = true
+  props["Radio Button Group Bottom/Right Interlock Timeout ms Button 1"].IsHidden = true
+  props["Radio Button Group Bottom/Right Interlock Timeout ms Button 2"].IsHidden = true
+  props["Radio Button Group Top/Left Interlock Blink"].IsHidden = true
+  props["Radio Button Group Bottom/Right Interlock Blink"].IsHidden = true
   
   if props["Operation Mode"].Value == "Individual" then
     props["Top Buttons Mode"].IsHidden = true
@@ -235,7 +235,7 @@ function RectifyProperties(props)
         props["Repeat Interval ms " .. i].IsHidden = true
       else
         props["Long Press ms " .. i].IsHidden = false
-          props["Repeat " .. i].IsHidden = false
+        props["Repeat " .. i].IsHidden = false
         props["Repeat Interval ms " .. i].IsHidden = false
       end
     end
@@ -246,25 +246,25 @@ function RectifyProperties(props)
     if props["Top Buttons Mode"].Value == "Radio Buttons" then
       props["Button " .. 1 .. " Mode"].IsHidden = true
       props["Button " .. 2 .. " Mode"].IsHidden = true
-      props["Radio Button Interlock Timeout ms On 1"].IsHidden = false
-      props["Radio Button Interlock Timeout ms Off 1"].IsHidden = false
-      props["Radio Button Interlock Blink Top/Left"].IsHidden = false
+      props["Radio Button Group Top/Left Interlock Timeout ms Button 1"].IsHidden = false
+      props["Radio Button Group Top/Left Interlock Timeout ms Button 2"].IsHidden = false
+      props["Radio Button Group Top/Left Interlock Blink"].IsHidden = false
       for i = 1, 2 do
-        props["Long Press ms " .. i].IsHidden = true
-        props["Repeat " .. i].IsHidden = true
-        props["Repeat Interval ms " .. i].IsHidden = true
+        props["Long Press ms " .. i].IsHidden = false
+        props["Repeat " .. i].IsHidden = false
+        props["Repeat Interval ms " .. i].IsHidden = false
       end
     end
     if props["Bottom Buttons Mode"].Value == "Radio Buttons" then
       props["Button " .. 3 .. " Mode"].IsHidden = true
       props["Button " .. 4 .. " Mode"].IsHidden = true
-      props["Radio Button Interlock Timeout ms On 2"].IsHidden = false
-      props["Radio Button Interlock Timeout ms Off 2"].IsHidden = false
-      props["Radio Button Interlock Blink Bottom/Right"].IsHidden = false
+      props["Radio Button Group Bottom/Right Interlock Timeout ms Button 1"].IsHidden = false
+      props["Radio Button Group Bottom/Right Interlock Timeout ms Button 2"].IsHidden = false
+      props["Radio Button Group Bottom/Right Interlock Blink"].IsHidden = false
       for i = 3, 4 do
-        props["Long Press ms " .. i].IsHidden = true
-        props["Repeat " .. i].IsHidden = true
-        props["Repeat Interval ms " .. i].IsHidden = true
+        props["Long Press ms " .. i].IsHidden = false
+        props["Repeat " .. i].IsHidden = false
+        props["Repeat Interval ms " .. i].IsHidden = false
       end
     end
   elseif props["Operation Mode"].Value == "Predefined Left/Right" then
@@ -286,25 +286,25 @@ function RectifyProperties(props)
     if props["Left Buttons Mode"].Value == "Radio Buttons" then
       props["Button " .. 1 .. " Mode"].IsHidden = true
       props["Button " .. 3 .. " Mode"].IsHidden = true
-      props["Radio Button Interlock Timeout ms On 1"].IsHidden = false
-      props["Radio Button Interlock Timeout ms Off 1"].IsHidden = false
-      props["Radio Button Interlock Blink Top/Left"].IsHidden = false
+      props["Radio Button Group Top/Left Interlock Timeout ms Button 1"].IsHidden = false
+      props["Radio Button Group Top/Left Interlock Timeout ms Button 2"].IsHidden = false
+      props["Radio Button Group Top/Left Interlock Blink"].IsHidden = false
       for i = 1, 3, 2 do
-        props["Long Press ms " .. i].IsHidden = true
-        props["Repeat " .. i].IsHidden = true
-        props["Repeat Interval ms " .. i].IsHidden = true
+        props["Long Press ms " .. i].IsHidden = false
+        props["Repeat " .. i].IsHidden = false
+        props["Repeat Interval ms " .. i].IsHidden = false
       end
     end
     if props["Right Buttons Mode"].Value == "Radio Buttons" then
       props["Button " .. 2 .. " Mode"].IsHidden = true
       props["Button " .. 4 .. " Mode"].IsHidden = true
-      props["Radio Button Interlock Timeout ms On 2"].IsHidden = false
-      props["Radio Button Interlock Timeout ms Off 2"].IsHidden = false
-      props["Radio Button Interlock Blink Bottom/Right"].IsHidden = false
+      props["Radio Button Group Bottom/Right Interlock Timeout ms Button 1"].IsHidden = false
+      props["Radio Button Group Bottom/Right Interlock Timeout ms Button 2"].IsHidden = false
+      props["Radio Button Group Bottom/Right Interlock Blink"].IsHidden = false
       for i = 2, 4, 2 do
-        props["Long Press ms " .. i].IsHidden = true
-        props["Repeat " .. i].IsHidden = true
-        props["Repeat Interval ms " .. i].IsHidden = true
+        props["Long Press ms " .. i].IsHidden = false
+        props["Repeat " .. i].IsHidden = false
+        props["Repeat Interval ms " .. i].IsHidden = false
       end
     end
   end
@@ -465,7 +465,7 @@ function GetControls(props)
       ControlType = "Indicator", 
       IndicatorType = "Led",
       Count = 1,
-      UserPin = true,
+      UserPin = false,
       PinStyle = "Output",
     })
     table.insert(ctrls,{
@@ -473,7 +473,7 @@ function GetControls(props)
       ControlType = "Indicator", 
       IndicatorType = "Led",
       Count = 1,
-      UserPin = true,
+      UserPin = false,
       PinStyle = "Output",
     })
   end
@@ -507,6 +507,7 @@ function GetControls(props)
     Count = 1,
     Min = 0,
     Max = 100,
+    DefaultValue = 100,
     UserPin = true,
     PinStyle = "Both",
   })
@@ -638,19 +639,19 @@ function GetControlLayout(props)
       layout["ColorOnIndicator"..i] = {PrettyName = "Color On "..i,Style = "Meter", MeterStyle = "Level",Margin = 2, CornerRadius = 0,Position = {LabelButtonPos[i][1]+51+71,LabelButtonPos[i][2]+32},Size = {20,20}}
       layout["ColorOff"..i] = {PrettyName = "Color Off "..i,Style = ColorStyle, TextBoxStyle = "Normal",Margin = 2, CornerRadius = 0,Position = {LabelButtonPos[i][1]+51,LabelButtonPos[i][2]+52},Size = {71,20}}
       layout["ColorOffIndicator"..i] = {PrettyName = "Color Off "..i,Style = "Meter", MeterStyle = "Level",Margin = 2, CornerRadius = 0,Position = {LabelButtonPos[i][1]+51+71,LabelButtonPos[i][2]+52},Size = {20,20}}
-      if props["Operation Mode"].Value == "Predefined Top/Bottom" and props["Top Buttons Mode"].Value == "Radio Buttons" and (i == 1 or i == 2) and props["Radio Button Interlock Blink Top/Left"].Value == "Yes" then
+      if props["Operation Mode"].Value == "Predefined Top/Bottom" and props["Top Buttons Mode"].Value == "Radio Buttons" and (i == 1 or i == 2) and props["Radio Button Group Top/Left Interlock Blink"].Value == "Yes" then
         table.insert(graphics,{Type = "Label",Text = "Color Blink",Color = Black,Font = "Roboto",FontSize = 11,FontStyle = "Regular",HTextAlign = "Center",Position = {LabelButtonPos[i][1]-4,LabelButtonPos[i][2]+72},Size = {59,20}})
         layout["ColorBlink"..i] = {PrettyName = "Color Blink "..i,Style = ColorStyle, TextBoxStyle = "Normal",Margin = 2, CornerRadius = 0,Position = {LabelButtonPos[i][1]+51,LabelButtonPos[i][2]+72},Size = {71,20}}
         layout["ColorBlinkIndicator"..i] = {PrettyName = "Color Blink "..i,Style = "Meter", MeterStyle = "Level",Margin = 2, CornerRadius = 0,Position = {LabelButtonPos[i][1]+51+71,LabelButtonPos[i][2]+72},Size = {20,20}}
-      elseif props["Operation Mode"].Value == "Predefined Top/Bottom" and props["Bottom Buttons Mode"].Value == "Radio Buttons" and (i == 3 or i == 4) and props["Radio Button Interlock Blink Bottom/Right"].Value == "Yes" then
+      elseif props["Operation Mode"].Value == "Predefined Top/Bottom" and props["Bottom Buttons Mode"].Value == "Radio Buttons" and (i == 3 or i == 4) and props["Radio Button Group Bottom/Right Interlock Blink"].Value == "Yes" then
         table.insert(graphics,{Type = "Label",Text = "Color Blink",Color = Black,Font = "Roboto",FontSize = 11,FontStyle = "Regular",HTextAlign = "Center",Position = {LabelButtonPos[i][1]-4,LabelButtonPos[i][2]+72},Size = {59,20}})
         layout["ColorBlink"..i] = {PrettyName = "Color Blink "..i,Style = ColorStyle, TextBoxStyle = "Normal",Margin = 2, CornerRadius = 0,Position = {LabelButtonPos[i][1]+51,LabelButtonPos[i][2]+72},Size = {71,20}}
         layout["ColorBlinkIndicator"..i] = {PrettyName = "Color Blink "..i,Style = "Meter", MeterStyle = "Level",Margin = 2, CornerRadius = 0,Position = {LabelButtonPos[i][1]+51+71,LabelButtonPos[i][2]+72},Size = {20,20}}
-      elseif props["Operation Mode"].Value == "Predefined Left/Right" and props["Left Buttons Mode"].Value == "Radio Buttons" and (i == 1 or i == 3) and props["Radio Button Interlock Blink Top/Left"].Value == "Yes" then
+      elseif props["Operation Mode"].Value == "Predefined Left/Right" and props["Left Buttons Mode"].Value == "Radio Buttons" and (i == 1 or i == 3) and props["Radio Button Group Top/Left Interlock Blink"].Value == "Yes" then
         table.insert(graphics,{Type = "Label",Text = "Color Blink",Color = Black,Font = "Roboto",FontSize = 11,FontStyle = "Regular",HTextAlign = "Center",Position = {LabelButtonPos[i][1]-4,LabelButtonPos[i][2]+72},Size = {59,20}})
         layout["ColorBlink"..i] = {PrettyName = "Color Blink "..i,Style = ColorStyle, TextBoxStyle = "Normal",Margin = 2, CornerRadius = 0,Position = {LabelButtonPos[i][1]+51,LabelButtonPos[i][2]+72},Size = {71,20}}
         layout["ColorBlinkIndicator"..i] = {PrettyName = "Color Blink "..i,Style = "Meter", MeterStyle = "Level",Margin = 2, CornerRadius = 0,Position = {LabelButtonPos[i][1]+51+71,LabelButtonPos[i][2]+72},Size = {20,20}}
-      elseif props["Operation Mode"].Value == "Predefined Left/Right" and props["Right Buttons Mode"].Value == "Radio Buttons" and (i == 2 or i == 4) and props["Radio Button Interlock Blink Bottom/Right"].Value == "Yes" then
+      elseif props["Operation Mode"].Value == "Predefined Left/Right" and props["Right Buttons Mode"].Value == "Radio Buttons" and (i == 2 or i == 4) and props["Radio Button Group Bottom/Right Interlock Blink"].Value == "Yes" then
         table.insert(graphics,{Type = "Label",Text = "Color Blink",Color = Black,Font = "Roboto",FontSize = 11,FontStyle = "Regular",HTextAlign = "Center",Position = {LabelButtonPos[i][1]-4,LabelButtonPos[i][2]+72},Size = {59,20}})
         layout["ColorBlink"..i] = {PrettyName = "Color Blink "..i,Style = ColorStyle, TextBoxStyle = "Normal",Margin = 2, CornerRadius = 0,Position = {LabelButtonPos[i][1]+51,LabelButtonPos[i][2]+72},Size = {71,20}}
         layout["ColorBlinkIndicator"..i] = {PrettyName = "Color Blink "..i,Style = "Meter", MeterStyle = "Level",Margin = 2, CornerRadius = 0,Position = {LabelButtonPos[i][1]+51+71,LabelButtonPos[i][2]+72},Size = {20,20}}

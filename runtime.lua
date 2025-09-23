@@ -4,6 +4,7 @@ KeepAlive = Timer.New()
 KeepAlive:Start(2)
 LockTiming = 2000
 FlashInterval = 0.2
+FlashLength = 1
 Lock = Controls.ButtonLock.Boolean
 LockAvailable = true 
 Rotation = {1,2,3,4}
@@ -19,9 +20,13 @@ LongKeyPress = {500,500,500,500}
 ShortKeyPress = 500
 ButtonTimers = {}
 ButtonPressed = {}
+ButtonInterLock = {}
+ButtonInterLockTimer = {}
 LongKeyPressTriggered = {}
 ButtonPressedTimeMs = {}
 for i = 1,4 do
+  ButtonInterLock[i] = false
+  ButtonInterLockTimer[i] = Timer.New()
   LongKeyPress[i] =  Properties["Long Press ms "..i].Value
   ButtonTimers[i] = Timer.New()
   ButtonPressed[i] = false
@@ -42,13 +47,13 @@ for i = 1,4 do
       end  
       return
     end 
-    if not Lock and LockAvailable and Properties["Repeat "..i].Value == "Yes" then 
+    if not Lock and not ButtonInterLock[i] and LockAvailable and Properties["Repeat "..i].Value == "Yes" then 
       if ButtonPressedTimeMs[i] % (math.ceil(Properties["Repeat Interval ms "..i].Value / 10) * 10)  == 0 then --rounding to 10ms chunk
         Controls["ShortPress"..i].Boolean = true 
         ResetShortPressLED(i,0.05)
       end
     end 
-    if not Lock and LockAvailable and not LongKeyPressTriggered[i] and ButtonPressedTimeMs[i] > LongKeyPress[i] then 
+    if not Lock and not ButtonInterLock[i] and LockAvailable and not LongKeyPressTriggered[i] and ButtonPressedTimeMs[i] > LongKeyPress[i] then 
       Controls["LongPress"..i].Boolean = true 
       LongKeyPressTriggered[i] = true
       ResetLongPressLED(i)
@@ -142,13 +147,13 @@ Socket.Error = function(ws, err)
 end 
 
 Socket.Data = function(ws, data)
-  --print("RX:", data)
+  -- print("RX:", data)
   ParseData(data)
 end 
 
 function SendMessage(msg)
   msg = rapidjson.encode(msg)
-  print("Sending: "..msg)
+  -- print("Sending: "..msg)
   succ, err = pcall(function()
     Socket:Write(msg)
   end)
@@ -205,7 +210,7 @@ for i = 1, 4 do
     Controls["ColorOn"..i].Choices = ColorKeys
     Controls["ColorOff"..i].Choices = ColorKeys
     Controls["ColorBlink"..i].Choices = ColorKeys
-  end
+  end 
 end
 
 function SendBrightness(i, brightness)
@@ -217,12 +222,14 @@ function SendBrightness(i, brightness)
   SendMessage(message)
 end 
 
-function Flash(i, color, interval)
+function Flash(i, color, off_collor, interval, length)
   local message = {
     command = "flash",
     led_index = i,
     color = color,
-    interval = interval
+    off_color = off_collor,
+    interval = interval,
+    length = length
   }
   SendMessage(message)
 end
@@ -290,18 +297,18 @@ end
 function ButtonStates(btn_id, val, internal)
   local individual_button = function(btn_id, val, internal)
     btn = Controls["Button"..btn_id]
-    print("LOCK",Lock)
+    -- print("LOCK",Lock)
     if not LockAvailable then 
       return 
     end
     if Lock then  
       if not SettingLock then
-        Flash({1,2,3,4},"#ff0000", FlashInterval)
+        Flash({1,2,3,4},"#ff0000", "#000000", FlashInterval, FlashLength)
       end
       return 
     end 
 
-    -- if Properties["Button "..btn_id.." Mode"].Value == "Trigger" and val == 1 then 
+    -- if Properties["Button "..btn_id.." Mode"].Value == "Trigger" then 
     --   if not internal then
     --     btn:Trigger()
     --     SendColor(btn_id, true, 0.2)
@@ -327,32 +334,94 @@ function ButtonStates(btn_id, val, internal)
       -- print(ButtonPressedTimeMs[btn_id])
     end  
   end 
-  local radio_button = function(btn_on, btn_off)
+  local radio_button = function(btn_on, btn_off, val, internal)
+    print("LOCK",Lock)
+    if not LockAvailable then 
+      return 
+    end
+    if Lock then  
+      if not SettingLock then
+        Flash({1,2,3,4},"#ff0000", "#000000", FlashInterval, FlashLength)
+      end
+      return 
+    end 
     Controls["Button"..btn_on].Boolean = true 
     Controls["Button"..btn_off].Boolean = false
+    if val == 0 and ButtonPressedTimeMs[btn_on] < ShortKeyPress then 
+      Controls["ShortPress"..btn_on].Boolean = true 
+      ResetShortPressLED(btn_on)
+    end 
+    local group_id = (btn_on == 4 or btn_off == 4) and "Bottom/Right" or "Top/Left" -- Btn 4 is only in group 2  
     SendColor(btn_on, Controls["Button"..btn_on].Boolean)
     SendColor(btn_off, Controls["Button"..btn_off].Boolean)
+    if group_id == "Top/Left" and Properties["Operation Mode"].Value == "Predefined Top/Bottom" then 
+      btn_1 = 1
+      btn_2 = 2
+    elseif group_id == "Bottom/Right" and Properties["Operation Mode"].Value == "Predefined Top/Bottom" then 
+      btn_1 = 3
+      btn_2 = 4
+    elseif group_id == "Top/Left" and Properties["Operation Mode"].Value == "Predefined Left/Right" then 
+      btn_1 = 1
+      btn_2 = 3
+    elseif group_id == "Bottom/Right" and Properties["Operation Mode"].Value == "Predefined Left/Right" then 
+      btn_1 = 2
+      btn_2 = 4
+    end
+    print(val,btn_on,btn_2,group_id,group_id == "Top/Left" and Properties["Operation Mode"] == "Predefined Top/Bottom")
+    -- if val == 1 and btn_on == btn_2 and Properties[string.format("Radio Button Group %s Interlock Timeout ms Button 1",group_id)].Value > 0 then 
+    --   print("locking:",btn_off)
+    --   local lock_time = Properties[string.format("Radio Button Group %s Interlock Timeout ms Button 1",group_id)].Value/1000
+    --   ButtonInterLock[btn_off] = true 
+    --   Flash({btn_on},"#0000FF", "#00FF00", 0.5, lock_time)
+    --   Timer.CallAfter(function()
+    --     ButtonInterLock[btn_off] = false
+    --     SendColor(btn_on, Controls["Button"..btn_on].Boolean)
+    --   end,lock_time)
+    -- end
+    local group_btn = btn_on == btn_1 and 1 or 2
+    if val == 1 and Properties[string.format("Radio Button Group %s Interlock Timeout ms Button %d",group_id, group_btn)].Value > 0 then 
+      print("locking:",btn_off)
+      local lock_time = Properties[string.format("Radio Button Group %s Interlock Timeout ms Button %d",group_id, group_btn)].Value/1000
+      ButtonInterLock[btn_off] = true 
+      color = Controls["ColorBlink"..btn_on].String 
+      color_off = Controls["ColorOff"..btn_on].String 
+      if Properties["Color Mode"].Value == "Pre-defined Options" then 
+        color = Colors[color]
+        color_off = Colors[color_off]
+      end
+      Flash({btn_on}, color, color_off, 0.5, lock_time)
+      ButtonInterLockTimer[btn_off].EventHandler = function()
+        ButtonInterLock[btn_off] = false
+        SendColor(btn_on, Controls["Button"..btn_on].Boolean)
+        ButtonInterLockTimer[btn_off]:Stop()
+      end
+      ButtonInterLockTimer:Start(lock_time)
+      -- Timer.CallAfter(function()
+      --   ButtonInterLock[btn_off] = false
+      --   SendColor(btn_on, Controls["Button"..btn_on].Boolean)
+      -- end,lock_time)
+    end
   end 
   
   if Properties["Operation Mode"].Value == "Individual" then
     individual_button(btn_id, val, internal)
   elseif Properties["Operation Mode"].Value == "Predefined Top/Bottom" then
     if btn_id == 1 or btn_id == 2 then 
-      if Properties["Top Buttons Mode"].Value == "Radio Buttons" and val == 1 then
+      if Properties["Top Buttons Mode"].Value == "Radio Buttons" then
         if btn_id == 1 then
-          radio_button(1,2)
+          radio_button(1,2,val,internal)
         else
-          radio_button(2,1)   
+          radio_button(2,1,val,internal)   
         end
       elseif Properties["Top Buttons Mode"].Value == "Individual" then
         individual_button(btn_id, val, internal)
       end
     elseif btn_id == 3 or btn_id == 4 then 
-      if Properties["Bottom Buttons Mode"].Value == "Radio Buttons" and val == 1 then
+      if Properties["Bottom Buttons Mode"].Value == "Radio Buttons" then
         if btn_id == 3 then
-          radio_button(3,4)
+          radio_button(3,4,val,internal)
         else
-          radio_button(4,3)   
+          radio_button(4,3,val,internal)   
         end
       elseif Properties["Bottom Buttons Mode"].Value == "Individual" then
         individual_button(btn_id, val, internal)
@@ -362,9 +431,9 @@ function ButtonStates(btn_id, val, internal)
     if btn_id == 1 or btn_id == 3 then
       if Properties["Left Buttons Mode"].Value == "Radio Buttons" then
         if btn_id == 1 then
-          radio_button(1,3)
+          radio_button(1,3,val,internal)
         else
-          radio_button(3,1)   
+          radio_button(3,1,val,internal)   
         end
       elseif Properties["Left Buttons Mode"].Value == "Individual" then
         individual_button(btn_id, val, internal)
@@ -372,9 +441,9 @@ function ButtonStates(btn_id, val, internal)
     elseif btn_id == 2 or btn_id == 4 then
       if Properties["Right Buttons Mode"].Value == "Radio Buttons" then
         if btn_id == 2 then
-          radio_button(2,4)
+          radio_button(2,4,val,internal)
         else
-          radio_button(4,2)   
+          radio_button(4,2,val,internal)   
         end
       elseif Properties["Right Buttons Mode"].Value == "Individual" then
         individual_button(btn_id, val, internal)
@@ -389,12 +458,12 @@ function SetButtonLock()
     LockAvailable = false 
     Lock = true
     Controls.ButtonLock.Boolean = Lock
-    Flash({1,2,3,4},"#ff0000", FlashInterval)
+    Flash({1,2,3,4},"#ff0000", "#000000", FlashInterval, FlashLength)
   else
     LockAvailable = false 
     Lock = false 
     Controls.ButtonLock.Boolean = Lock
-    Flash({1,2,3,4},"#ff0000", FlashInterval)
+    Flash({1,2,3,4},"#ff0000", "#000000", FlashInterval,FlashLength)
     Timer.CallAfter(function()
       SyncState() 
     end,0.5)
@@ -411,26 +480,32 @@ ParseData = function(data)
 end
 
 function ButtonPressEvent(btn_id, val, internal)
-  if val == 1 then 
-    ButtonTimers[btn_id]:Start(TimerStep)
-    ButtonPressed[btn_id] = true 
-    if not Lock then
-      ButtonStates(btn_id, val, internal)
-    end
-  else
-    print("lcokavailable",LockAvailable)
-    ButtonTimers[btn_id]:Stop()
-    ButtonStates(btn_id, val, internal)
-    ButtonPressed[btn_id] = false
-    ButtonPressedTimeMs[btn_id] = 0
-    LongKeyPressTriggered[btn_id] = false
-    LockAvailable = true
-    for i = 1,4 do 
-      if ButtonPressed[i] then 
-        LockAvailable = false
+  if internal then 
+  else 
+    print("buttonpressed",btn_id,ButtonInterLock[btn_id])
+    if val == 1 then 
+      ButtonTimers[btn_id]:Start(TimerStep)
+      ButtonPressed[btn_id] = true 
+      if not Lock and not ButtonInterLock[btn_id] then
+        ButtonStates(btn_id, val, internal)
+      end
+    else
+      -- print("lockavailable",LockAvailable)
+      ButtonTimers[btn_id]:Stop()
+      if not Lock and not ButtonInterLock[btn_id] then
+        ButtonStates(btn_id, val, internal)
+      end
+      ButtonPressed[btn_id] = false
+      ButtonPressedTimeMs[btn_id] = 0
+      LongKeyPressTriggered[btn_id] = false
+      LockAvailable = true
+      for i = 1,4 do 
+        if ButtonPressed[i] then 
+          LockAvailable = false
+        end 
       end 
     end 
-  end 
+  end
 end 
 
 function ValidateIP(ip)

@@ -1,9 +1,9 @@
-props["Radio Button Interlock Timeout ms On 1"].IsHidden = true
-props["Radio Button Interlock Timeout ms On 2"].IsHidden = true
-props["Radio Button Interlock Timeout ms Off 1"].IsHidden = true
-props["Radio Button Interlock Timeout ms Off 2"].IsHidden = true
-props["Radio Button Interlock Blink Top/Left"].IsHidden = true
-props["Radio Button Interlock Blink Bottom/Right"].IsHidden = true
+props["Radio Button Group Top/Left Interlock Timeout ms Button 1"].IsHidden = true
+props["Radio Button Group Top/Left Interlock Timeout ms Button 2"].IsHidden = true
+props["Radio Button Group Bottom/Right Interlock Timeout ms Button 1"].IsHidden = true
+props["Radio Button Group Bottom/Right Interlock Timeout ms Button 2"].IsHidden = true
+props["Radio Button Group Top/Left Interlock Blink"].IsHidden = true
+props["Radio Button Group Bottom/Right Interlock Blink"].IsHidden = true
 
 if props["Operation Mode"].Value == "Individual" then
   props["Top Buttons Mode"].IsHidden = true
@@ -30,7 +30,7 @@ elseif props["Operation Mode"].Value == "Predefined Top/Bottom" then
       props["Repeat Interval ms " .. i].IsHidden = true
     else
       props["Long Press ms " .. i].IsHidden = false
-        props["Repeat " .. i].IsHidden = false
+      props["Repeat " .. i].IsHidden = false
       props["Repeat Interval ms " .. i].IsHidden = false
     end
   end
@@ -41,25 +41,25 @@ elseif props["Operation Mode"].Value == "Predefined Top/Bottom" then
   if props["Top Buttons Mode"].Value == "Radio Buttons" then
     props["Button " .. 1 .. " Mode"].IsHidden = true
     props["Button " .. 2 .. " Mode"].IsHidden = true
-    props["Radio Button Interlock Timeout ms On 1"].IsHidden = false
-    props["Radio Button Interlock Timeout ms Off 1"].IsHidden = false
-    props["Radio Button Interlock Blink Top/Left"].IsHidden = false
+    props["Radio Button Group Top/Left Interlock Timeout ms Button 1"].IsHidden = false
+    props["Radio Button Group Top/Left Interlock Timeout ms Button 2"].IsHidden = false
+    props["Radio Button Group Top/Left Interlock Blink"].IsHidden = false
     for i = 1, 2 do
-      props["Long Press ms " .. i].IsHidden = true
-      props["Repeat " .. i].IsHidden = true
-      props["Repeat Interval ms " .. i].IsHidden = true
+      props["Long Press ms " .. i].IsHidden = false
+      props["Repeat " .. i].IsHidden = false
+      props["Repeat Interval ms " .. i].IsHidden = false
     end
   end
   if props["Bottom Buttons Mode"].Value == "Radio Buttons" then
     props["Button " .. 3 .. " Mode"].IsHidden = true
     props["Button " .. 4 .. " Mode"].IsHidden = true
-    props["Radio Button Interlock Timeout ms On 2"].IsHidden = false
-    props["Radio Button Interlock Timeout ms Off 2"].IsHidden = false
-    props["Radio Button Interlock Blink Bottom/Right"].IsHidden = false
+    props["Radio Button Group Bottom/Right Interlock Timeout ms Button 1"].IsHidden = false
+    props["Radio Button Group Bottom/Right Interlock Timeout ms Button 2"].IsHidden = false
+    props["Radio Button Group Bottom/Right Interlock Blink"].IsHidden = false
     for i = 3, 4 do
-      props["Long Press ms " .. i].IsHidden = true
-      props["Repeat " .. i].IsHidden = true
-      props["Repeat Interval ms " .. i].IsHidden = true
+      props["Long Press ms " .. i].IsHidden = false
+      props["Repeat " .. i].IsHidden = false
+      props["Repeat Interval ms " .. i].IsHidden = false
     end
   end
 elseif props["Operation Mode"].Value == "Predefined Left/Right" then
@@ -81,25 +81,25 @@ elseif props["Operation Mode"].Value == "Predefined Left/Right" then
   if props["Left Buttons Mode"].Value == "Radio Buttons" then
     props["Button " .. 1 .. " Mode"].IsHidden = true
     props["Button " .. 3 .. " Mode"].IsHidden = true
-    props["Radio Button Interlock Timeout ms On 1"].IsHidden = false
-    props["Radio Button Interlock Timeout ms Off 1"].IsHidden = false
-    props["Radio Button Interlock Blink Top/Left"].IsHidden = false
+    props["Radio Button Group Top/Left Interlock Timeout ms Button 1"].IsHidden = false
+    props["Radio Button Group Top/Left Interlock Timeout ms Button 2"].IsHidden = false
+    props["Radio Button Group Top/Left Interlock Blink"].IsHidden = false
     for i = 1, 3, 2 do
-      props["Long Press ms " .. i].IsHidden = true
-      props["Repeat " .. i].IsHidden = true
-      props["Repeat Interval ms " .. i].IsHidden = true
+      props["Long Press ms " .. i].IsHidden = false
+      props["Repeat " .. i].IsHidden = false
+      props["Repeat Interval ms " .. i].IsHidden = false
     end
   end
   if props["Right Buttons Mode"].Value == "Radio Buttons" then
     props["Button " .. 2 .. " Mode"].IsHidden = true
     props["Button " .. 4 .. " Mode"].IsHidden = true
-    props["Radio Button Interlock Timeout ms On 2"].IsHidden = false
-    props["Radio Button Interlock Timeout ms Off 2"].IsHidden = false
-    props["Radio Button Interlock Blink Bottom/Right"].IsHidden = false
+    props["Radio Button Group Bottom/Right Interlock Timeout ms Button 1"].IsHidden = false
+    props["Radio Button Group Bottom/Right Interlock Timeout ms Button 2"].IsHidden = false
+    props["Radio Button Group Bottom/Right Interlock Blink"].IsHidden = false
     for i = 2, 4, 2 do
-      props["Long Press ms " .. i].IsHidden = true
-      props["Repeat " .. i].IsHidden = true
-      props["Repeat Interval ms " .. i].IsHidden = true
+      props["Long Press ms " .. i].IsHidden = false
+      props["Repeat " .. i].IsHidden = false
+      props["Repeat Interval ms " .. i].IsHidden = false
     end
   end
 end

@@ -34,7 +34,7 @@ table.insert(props, {
 })
 
 table.insert(props, {
-  Name = "Radio Button Interlock Timeout ms On 1",
+  Name = "Radio Button Group Top/Left Interlock Timeout ms Button 1",
   Type = "integer",
   Min = 0,
   Max = 60000,
@@ -42,7 +42,7 @@ table.insert(props, {
 })
 
 table.insert(props, {
-  Name = "Radio Button Interlock Timeout ms On 2",
+  Name = "Radio Button Group Top/Left Interlock Timeout ms Button 2",
   Type = "integer",
   Min = 0,
   Max = 60000,
@@ -50,7 +50,7 @@ table.insert(props, {
 })
 
 table.insert(props, {
-  Name = "Radio Button Interlock Timeout ms Off 1",
+  Name = "Radio Button Group Bottom/Right Interlock Timeout ms Button 1",
   Type = "integer",
   Min = 0,
   Max = 60000,
@@ -58,7 +58,7 @@ table.insert(props, {
 })
 
 table.insert(props, {
-  Name = "Radio Button Interlock Timeout ms Off 2",
+  Name = "Radio Button Group Bottom/Right Interlock Timeout ms Button 2",
   Type = "integer",
   Min = 0,
   Max = 60000,
@@ -66,14 +66,14 @@ table.insert(props, {
 })
 
 table.insert(props, {
-  Name = "Radio Button Interlock Blink Top/Left",
+  Name = "Radio Button Group Top/Left Interlock Blink",
   Type = "enum",
   Choices = {"Yes", "No"},
   Value = "No"
 })
 
 table.insert(props, {
-  Name = "Radio Button Interlock Blink Bottom/Right",
+  Name = "Radio Button Group Bottom/Right Interlock Blink",
   Type = "enum",
   Choices = {"Yes", "No"},
   Value = "No"
