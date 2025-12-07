@@ -104,8 +104,8 @@ KeepAlive.EventHandler = function()
     Socket:Ping()
   end)
   if succ then 
-    Controls.Status.Value = 0
-    Controls.Status.String = "Connected"
+    -- Controls.Status.Value = 0
+    -- Controls.Status.String = "Connected"
   else  
     Controls.Status.Value = 4
     Controls.Status.String = ""
@@ -367,7 +367,7 @@ function ButtonStates(btn_id, val, internal)
       btn_1 = 2
       btn_2 = 4
     end
-    print(val,btn_on,btn_2,group_id,group_id == "Top/Left" and Properties["Operation Mode"] == "Predefined Top/Bottom")
+    -- print(val,btn_on,btn_2,group_id,group_id == "Top/Left" and Properties["Operation Mode"] == "Predefined Top/Bottom")
     -- if val == 1 and btn_on == btn_2 and Properties[string.format("Radio Button Group %s Interlock Timeout ms Button 1",group_id)].Value > 0 then 
     --   print("locking:",btn_off)
     --   local lock_time = Properties[string.format("Radio Button Group %s Interlock Timeout ms Button 1",group_id)].Value/1000
@@ -392,10 +392,11 @@ function ButtonStates(btn_id, val, internal)
       Flash({btn_on}, color, color_off, 0.5, lock_time)
       ButtonInterLockTimer[btn_off].EventHandler = function()
         ButtonInterLock[btn_off] = false
+        print("finito",btn_on,Controls["Button"..btn_on].Boolean)
         SendColor(btn_on, Controls["Button"..btn_on].Boolean)
         ButtonInterLockTimer[btn_off]:Stop()
       end
-      ButtonInterLockTimer:Start(lock_time)
+      ButtonInterLockTimer[btn_off]:Start(lock_time + 1)
       -- Timer.CallAfter(function()
       --   ButtonInterLock[btn_off] = false
       --   SendColor(btn_on, Controls["Button"..btn_on].Boolean)
