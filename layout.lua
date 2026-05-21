@@ -1,5 +1,7 @@
 table.insert(graphics,{Type = "GroupBox",Fill = White,CornerRadius = 0,Position = {0,0},Size = {446,75}})
-table.insert(graphics,{Type = "GroupBox",Fill = Grey,CornerRadius = 0,Position = {11,75},Size = {425,482}})
+table.insert(graphics,{Type = "Svg",Image = "--[[ #encode "Logo.svg"]]",Position = {33,10},Size = {160,56}})
+table.insert(graphics,{Type = "Svg",Image = "--[[ #encode "NodeCore4.svg"]]",Position = {221,29},Size = {192,19}})
+table.insert(graphics,{Type = "GroupBox",Fill = Grey,CornerRadius = 0,Position = {0,75},Size = {446,482}})
 table.insert(graphics,{Type = "Header",Text = "Connection & Status",Color = Black,Font = "Roboto",FontSize = 14,FontStyle = "Regular",HTextAlign = "Center",Position = {42,86},Size = {364,6}})
 table.insert(graphics,{Type = "Label",Text = "IP Address",Fill = Clear,Font = "Roboto",FontSize = 11,HTextAlign = "Right",Position = {108,111},Size = {65,16}})
 layout["IP"] = {PrettyName = "IP Address",Style = "Text",CornerRadius = 0,Margin = 0,Position = {186,111},Size = {153,16}}
