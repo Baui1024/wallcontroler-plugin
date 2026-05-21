@@ -6,7 +6,8 @@ LockTiming = 2000
 FlashInterval = 0.2
 FlashLength = 1
 Lock = Controls.ButtonLock.Boolean
-LockAvailable = true 
+LockAvailable = true
+SettingLock = false -- Set to true to disable button lock functionality entirely
 Rotation = {1,2,3,4}
 if Properties["Rotation"].Value == "90" then 
   Rotation = {2,4,1,3}
@@ -34,14 +35,8 @@ for i = 1,4 do
   ButtonPressedTimeMs[i] = 0
   ButtonTimers[i].EventHandler = function()
     ButtonPressedTimeMs[i] = ButtonPressedTimeMs[i] + 10 
-    if LockAvailable and (i == 1 or i == 2) and ButtonPressed[1] and ButtonPressed[2] then 
+    if not SettingLock and LockAvailable and (i == 1 or i == 2) and ButtonPressed[1] and ButtonPressed[2] then 
       if ButtonPressedTimeMs[1] > LockTiming and ButtonPressedTimeMs[2] > LockTiming then 
-          print("what",Properties["Button "..i.." Mode"].Value == "Momentary")
-        for k = 1,2 do
-          if Properties["Button "..k.." Mode"].Value == "Momentary" then 
-            Controls["Button"..k].Boolean = false --reset momentaries
-          end
-        end
         ButtonTimers[i]:Stop()
         SetButtonLock()
       end  
@@ -59,7 +54,7 @@ for i = 1,4 do
       ResetLongPressLED(i)
     elseif ButtonPressedTimeMs[i] >= 60000 then --reset after 1nub
       ButtonPressedTimeMs[i] = 0
-      ButtonTimers[i] = 0
+      ButtonTimers[i]:Stop()
       ButtonPressed[i] = false
       LongKeyPressTriggered[i] = false
     end 
@@ -291,6 +286,8 @@ function SyncState()
     for i = 1, 4 do 
       SendColor(i, Controls["Button"..i].Boolean)
     end 
+  else
+    SendMultipleColor({1,2,3,4}, "#000000")
   end
 end 
 
@@ -302,9 +299,6 @@ function ButtonStates(btn_id, val, internal)
       return 
     end
     if Lock then  
-      if not SettingLock then
-        Flash({1,2,3,4},"#ff0000", "#000000", FlashInterval, FlashLength)
-      end
       return 
     end 
 
@@ -340,9 +334,6 @@ function ButtonStates(btn_id, val, internal)
       return 
     end
     if Lock then  
-      if not SettingLock then
-        Flash({1,2,3,4},"#ff0000", "#000000", FlashInterval, FlashLength)
-      end
       return 
     end 
     Controls["Button"..btn_on].Boolean = true 
@@ -379,7 +370,7 @@ function ButtonStates(btn_id, val, internal)
     --   end,lock_time)
     -- end
     local group_btn = btn_on == btn_1 and 1 or 2
-    if val == 1 and Properties[string.format("Radio Button Group %s Interlock Timeout ms Button %d",group_id, group_btn)].Value > 0 then 
+    if val == 0 and Properties[string.format("Radio Button Group %s Interlock Timeout ms Button %d",group_id, group_btn)].Value > 0 then 
       print("locking:",btn_off)
       local lock_time = Properties[string.format("Radio Button Group %s Interlock Timeout ms Button %d",group_id, group_btn)].Value/1000
       ButtonInterLock[btn_off] = true 
@@ -454,20 +445,30 @@ function ButtonStates(btn_id, val, internal)
 end  
 
 function SetButtonLock()
+  if SettingLock then return end
   print("Setting Lock!")
-  if not Lock then  
+  if not Lock then
+    for i = 1,4 do
+      ButtonTimers[i]:Stop()
+      ButtonPressed[i] = false
+      ButtonPressedTimeMs[i] = 0
+    end  
     LockAvailable = false 
     Lock = true
     Controls.ButtonLock.Boolean = Lock
     Flash({1,2,3,4},"#ff0000", "#000000", FlashInterval, FlashLength)
   else
+    for i = 1,4 do
+      ButtonTimers[i]:Stop()
+      ButtonPressedTimeMs[i] = 0
+    end
     LockAvailable = false 
     Lock = false 
     Controls.ButtonLock.Boolean = Lock
     Flash({1,2,3,4},"#ff0000", "#000000", FlashInterval,FlashLength)
     Timer.CallAfter(function()
       SyncState() 
-    end,0.5)
+    end,FlashLength + 0.1)
   end
 end
 
@@ -486,15 +487,19 @@ function ButtonPressEvent(btn_id, val, internal)
     print("buttonpressed",btn_id,ButtonInterLock[btn_id])
     if val == 1 then 
       ButtonTimers[btn_id]:Start(TimerStep)
-      ButtonPressed[btn_id] = true 
-      if not Lock and not ButtonInterLock[btn_id] then
-        ButtonStates(btn_id, val, internal)
+      ButtonPressed[btn_id] = true
+      if not Lock and not ButtonInterLock[btn_id] and LockAvailable then
+        if Properties["Button "..btn_id.." Mode"].Value == "Momentary" then
+          SendColor(btn_id, true)
+        end
       end
     else
       -- print("lockavailable",LockAvailable)
       ButtonTimers[btn_id]:Stop()
-      if not Lock and not ButtonInterLock[btn_id] then
+      if not Lock and not ButtonInterLock[btn_id] and LockAvailable then
         ButtonStates(btn_id, val, internal)
+      elseif Lock and ButtonPressed[btn_id] then
+        Flash({1,2,3,4},"#ff0000", "#000000", FlashInterval, FlashLength)
       end
       ButtonPressed[btn_id] = false
       ButtonPressedTimeMs[btn_id] = 0

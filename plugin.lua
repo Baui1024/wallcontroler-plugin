@@ -1,6 +1,6 @@
--- Basic Framework Plugin
--- by QSC
--- October 2020
+-- Node Core 4 Plugin
+-- by Touch Forge
+-- May 2026
 
 -- Information block for the plugin
 --[[ #include "info.lua" ]]
@@ -28,7 +28,7 @@ end
 
 -- The name that will initially display when dragged into a design
 function GetPrettyName(props)
-  return "Wallcontroller" .. PluginInfo.Version
+  return "Node Core 4 " .. PluginInfo.Version
 end
 
 -- Optional function used if plugin has multiple pages
@@ -91,7 +91,7 @@ end
 function GetControlLayout(props)
   local layout = {}
   local graphics = {}
-  layout["code"] = {PrettyName = "Code",Style = "None"}
+  -- layout["code"] = {PrettyName = "Code",Style = "None"}
   --[[ #include "layout.lua" ]]
   return layout, graphics
 end

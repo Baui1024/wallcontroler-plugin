@@ -12,27 +12,15 @@ if props["Operation Mode"].Value == "Individual" then
   props["Right Buttons Mode"].IsHidden = true
   for i = 1, 4 do
     props["Button " .. i .. " Mode"].IsHidden = false
-    if props["Button " .. i .. " Mode"].Value == "Toggle" then
-      props["Long Press ms " .. i].IsHidden = true
-      props["Repeat " .. i].IsHidden = true
-      props["Repeat Interval ms " .. i].IsHidden = true
-    else
-      props["Long Press ms " .. i].IsHidden = false
-        props["Repeat " .. i].IsHidden = false
-      props["Repeat Interval ms " .. i].IsHidden = false
-    end
-  end
-elseif props["Operation Mode"].Value == "Predefined Top/Bottom" then
-  for i = 1, 4 do
-    if props["Button " .. i .. " Mode"].Value == "Toggle" then
-      props["Long Press ms " .. i].IsHidden = true
-      props["Repeat " .. i].IsHidden = true
-      props["Repeat Interval ms " .. i].IsHidden = true
-    else
       props["Long Press ms " .. i].IsHidden = false
       props["Repeat " .. i].IsHidden = false
       props["Repeat Interval ms " .. i].IsHidden = false
-    end
+  end
+elseif props["Operation Mode"].Value == "Predefined Top/Bottom" then
+  for i = 1, 4 do
+      props["Long Press ms " .. i].IsHidden = false
+      props["Repeat " .. i].IsHidden = false
+      props["Repeat Interval ms " .. i].IsHidden = false
   end
   props["Top Buttons Mode"].IsHidden = false
   props["Bottom Buttons Mode"].IsHidden = false
@@ -64,15 +52,9 @@ elseif props["Operation Mode"].Value == "Predefined Top/Bottom" then
   end
 elseif props["Operation Mode"].Value == "Predefined Left/Right" then
   for i = 1, 4 do
-    if props["Button " .. i .. " Mode"].Value == "Toggle" then
-      props["Long Press ms " .. i].IsHidden = true
-      props["Repeat " .. i].IsHidden = true
-      props["Repeat Interval ms " .. i].IsHidden = true
-    else
       props["Long Press ms " .. i].IsHidden = false
-        props["Repeat " .. i].IsHidden = false
+      props["Repeat " .. i].IsHidden = false
       props["Repeat Interval ms " .. i].IsHidden = false
-    end
   end
   props["Top Buttons Mode"].IsHidden = true
   props["Bottom Buttons Mode"].IsHidden = true

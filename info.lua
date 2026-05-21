@@ -1,8 +1,8 @@
 PluginInfo = {
-  Name = "Wall Controller",
+  Name = "Node Core 4",
   Version = "1.0",
-  BuildVersion = "1.0.0.96",
+  BuildVersion = "1.0.0.100",
   Id = "ecb3592b-01c9-4f20-9d34-9f98002e56fc",
-  Author = "BBuilds",
+  Author = "Touch Forge",
   Description = "A very basic plugin"  
 }
