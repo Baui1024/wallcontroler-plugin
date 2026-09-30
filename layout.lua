@@ -12,10 +12,10 @@ table.insert(graphics,{Type = "Header",Text = "Controls",Color = Black,Font = "R
 ColorStyle = props["Color Mode"].Value == "Pre-defined Options" and "ComboBox" or "Text"
 
 DualColorOptions = {
-  true,
-  true,
-  true,
-  true
+  props["Independent Color 1"].Value == "No",
+  props["Independent Color 2"].Value == "No",
+  props["Independent Color 3"].Value == "No",
+  props["Independent Color 4"].Value == "No"
 }
 
 ButtonType = {
@@ -140,6 +140,7 @@ for i = 1, 4 do
   else
     table.insert(graphics,{Type = "Label",Text = "Color",Color = Black,Font = "Roboto",FontSize = 11,FontStyle = "Regular",HTextAlign = "Center",Position =  {LabelButtonPos[i][1],LabelButtonPos[i][2]+32},Size = {51,20}})
     layout["Color"..i] = {PrettyName = "Color "..i,Style = ColorStyle, TextBoxStyle = "Normal",Margin = 2, CornerRadius = 0,Position = {LabelButtonPos[i][1]+51,LabelButtonPos[i][2]+32},Size = {71,20}}
+    layout["ColorIndicator"..i] = {PrettyName = "Color "..i,Style = "Meter", MeterStyle = "Level",Margin = 2, CornerRadius = 0,Position = {LabelButtonPos[i][1]+51+71,LabelButtonPos[i][2]+32},Size = {20,20}}
   end
   layout["Button"..i] = {PrettyName = "Button "..i,Style = "Button",ButtonStyle = ButtonType[i],Margin = 2, CornerRadius = 0,Position = ButtonPos[i],Size = {71,45}}
 end

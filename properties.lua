@@ -106,6 +106,12 @@ for i = 1, 4 do
     Max = 2000,
     Value = 500
   })
+  table.insert(props, {
+    Name = "Independent Color "..i,
+    Type = "enum",
+    Choices = {"Yes", "No"},
+    Value = "No"
+  })
 end
 
 table.insert(props, {

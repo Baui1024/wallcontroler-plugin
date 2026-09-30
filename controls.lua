@@ -1,4 +1,3 @@
-table.insert(ctrls,{Name = "code",ControlType = "Text",PinStyle = "Input",Count = 1})
 ButtonType = {
   "Momentary",
   "Momentary",
@@ -72,6 +71,15 @@ for i = 1, 4 do
     UserPin = true,
     DefaultValue = DefaultColorOn,
     PinStyle = "Both",
+  })
+  table.insert(ctrls, {
+    Name = "ColorIndicator" .. i,
+    ControlType = "Indicator",
+    IndicatorType = "Led",
+    Count = 1,
+    UserPin = false,
+    DefaultValue = 20,
+    PinStyle = "None",
   })
   table.insert(ctrls, {
     Name = "ColorOn" .. i,
@@ -171,7 +179,7 @@ table.insert(ctrls, {
   Count = 1,
   Min = 0,
   Max = 100,
-  DefaultValue = 100,
+  DefaultValue = 20,
   UserPin = true,
   PinStyle = "Both",
 })

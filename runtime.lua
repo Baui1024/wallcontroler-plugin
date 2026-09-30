@@ -202,6 +202,7 @@ table.sort(ColorKeys)
 
 for i = 1, 4 do 
   if Properties["Color Mode"].Value == "Pre-defined Options" then 
+    Controls["Color"..i].Choices = ColorKeys
     Controls["ColorOn"..i].Choices = ColorKeys
     Controls["ColorOff"..i].Choices = ColorKeys
     Controls["ColorBlink"..i].Choices = ColorKeys
@@ -250,7 +251,9 @@ end
 
 function SendColor(i,state,reset)
   local color = ""
-  if state then 
+  if Properties["Independent Color "..i].Value == "Yes" then 
+    color = Controls["Color"..i].String
+  elseif state then 
     color = Controls["ColorOn"..i].String
   else 
     color = Controls["ColorOff"..i].String 
@@ -373,14 +376,16 @@ function ButtonStates(btn_id, val, internal)
     if val == 0 and Properties[string.format("Radio Button Group %s Interlock Timeout ms Button %d",group_id, group_btn)].Value > 0 then 
       print("locking:",btn_off)
       local lock_time = Properties[string.format("Radio Button Group %s Interlock Timeout ms Button %d",group_id, group_btn)].Value/1000
-      ButtonInterLock[btn_off] = true 
-      color = Controls["ColorBlink"..btn_on].String 
-      color_off = Controls["ColorOff"..btn_on].String 
-      if Properties["Color Mode"].Value == "Pre-defined Options" then 
-        color = Colors[color]
-        color_off = Colors[color_off]
+      ButtonInterLock[btn_off] = true
+      if Properties["Independent Color "..btn_on].Value == "No" then -- independent buttons only ever show their own color
+        color = Controls["ColorBlink"..btn_on].String
+        color_off = Controls["ColorOff"..btn_on].String
+        if Properties["Color Mode"].Value == "Pre-defined Options" then
+          color = Colors[color]
+          color_off = Colors[color_off]
+        end
+        Flash({btn_on}, color, color_off, 0.5, lock_time)
       end
-      Flash({btn_on}, color, color_off, 0.5, lock_time)
       ButtonInterLockTimer[btn_off].EventHandler = function()
         ButtonInterLock[btn_off] = false
         print("finito",btn_on,Controls["Button"..btn_on].Boolean)
@@ -541,8 +546,11 @@ function AssignColors()
     ResetShortPressLED(i)
     ResetLongPressLED(i)
     if Properties["Color Mode"].Value == "Pre-defined Options" then 
-      onColor, offColor, blinkColor = false, false, false
+      color, onColor, offColor, blinkColor = false, false, false, false
       for key,value in pairs(Colors) do
+        if key == Controls["Color"..i].String then 
+          color = true 
+        end
         if key == Controls["ColorOn"..i].String then 
           onColor = true 
         end
@@ -553,6 +561,9 @@ function AssignColors()
           blinkColor = true 
         end
       end
+      if not color then 
+        Controls["Color"..i].String = "White"
+      end
       if not onColor then 
         Controls["ColorOn"..i].String = "White"
       end
@@ -562,10 +573,14 @@ function AssignColors()
       if not blinkColor then 
         Controls["ColorBlink"..i].String = "Off"
       end
+      Controls["ColorIndicator"..i].Color = Colors[Controls["Color"..i].String]
       Controls["ColorOnIndicator"..i].Color = Colors[Controls["ColorOn"..i].String]
       Controls["ColorOffIndicator"..i].Color = Colors[Controls["ColorOff"..i].String]
       Controls["ColorBlinkIndicator"..i].Color = Colors[Controls["ColorBlink"..i].String]
     else 
+      if not ValidHexColor(Controls["Color"..i].String) then
+        Controls["Color"..i].String = "#FFFFFF"
+      end
       if not ValidHexColor(Controls["ColorOn"..i].String) then
         Controls["ColorOn"..i].String = "#FFFFFF"
       end
@@ -575,9 +590,10 @@ function AssignColors()
       if not ValidHexColor(Controls["ColorBlink"..i].String) then
         Controls["ColorBlink"..i].String = "#000000"
       end
+      Controls["ColorIndicator"..i].Color = Controls["Color"..i].String
       Controls["ColorOnIndicator"..i].Color = Controls["ColorOn"..i].String
       Controls["ColorOffIndicator"..i].Color = Controls["ColorOff"..i].String
-      Controls["ColorBlinkIndicator"..i].Color = Colors[Controls["ColorBlink"..i].String]
+      Controls["ColorBlinkIndicator"..i].Color = Controls["ColorBlink"..i].String
     end 
   end 
 end 
@@ -588,6 +604,7 @@ function EventHandlers()
     Controls["Button"..i].EventHandler = function(ctrl)
       ButtonPressEvent(i, ctrl.Boolean and 1 or 0 , true)
     end 
+    Controls["Color"..i].EventHandler = function() AssignColors() SyncState() end 
     Controls["ColorOn"..i].EventHandler = function() AssignColors() SyncState() end 
     Controls["ColorOff"..i].EventHandler = function() AssignColors() SyncState() end 
     Controls["ColorBlink"..i].EventHandler = function() AssignColors() SyncState() end 
