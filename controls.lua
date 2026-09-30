@@ -165,6 +165,13 @@ table.insert(ctrls, {
   PinStyle = "Both",
 })
 table.insert(ctrls, {
+  Name = "Token",
+  ControlType = "Text",
+  Count = 1,
+  UserPin = true,
+  PinStyle = "Both",
+})
+table.insert(ctrls, {
   Name = "ButtonLock",
   ControlType = "Button",
   ButtonType = "Toggle",

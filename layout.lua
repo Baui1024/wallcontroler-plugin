@@ -1,13 +1,15 @@
 table.insert(graphics,{Type = "GroupBox",Fill = White,CornerRadius = 0,Position = {0,0},Size = {446,75}})
 table.insert(graphics,{Type = "Svg",Image = "--[[ #encode "Logo.svg"]]",Position = {33,10},Size = {160,56}})
 table.insert(graphics,{Type = "Svg",Image = "--[[ #encode "NodeCore4.svg"]]",Position = {221,29},Size = {192,19}})
-table.insert(graphics,{Type = "GroupBox",Fill = Grey,CornerRadius = 0,Position = {0,75},Size = {446,482}})
+table.insert(graphics,{Type = "GroupBox",Fill = Grey,CornerRadius = 0,Position = {0,75},Size = {446,502}})
 table.insert(graphics,{Type = "Header",Text = "Connection & Status",Color = Black,Font = "Roboto",FontSize = 14,FontStyle = "Regular",HTextAlign = "Center",Position = {42,86},Size = {364,6}})
 table.insert(graphics,{Type = "Label",Text = "IP Address",Fill = Clear,Font = "Roboto",FontSize = 11,HTextAlign = "Right",Position = {108,111},Size = {65,16}})
 layout["IP"] = {PrettyName = "IP Address",Style = "Text",CornerRadius = 0,Margin = 0,Position = {186,111},Size = {153,16}}
-layout["Status"] = {PrettyName = "Status",Style = "Text",CornerRadius = 0,Margin = 0,Position = {108,137},Size = {231,32}}
+table.insert(graphics,{Type = "Label",Text = "Token",Fill = Clear,Font = "Roboto",FontSize = 11,HTextAlign = "Right",Position = {108,131},Size = {65,16}})
+layout["Token"] = {PrettyName = "Token",Style = "Text",CornerRadius = 0,Margin = 0,Position = {186,131},Size = {153,16}}
+layout["Status"] = {PrettyName = "Status",Style = "Text",CornerRadius = 0,Margin = 0,Position = {108,156},Size = {231,32}}
 
-table.insert(graphics,{Type = "Header",Text = "Controls",Color = Black,Font = "Roboto",FontSize = 14,FontStyle = "Regular",HTextAlign = "Center",Position = {42,190},Size = {364,6}})
+table.insert(graphics,{Type = "Header",Text = "Controls",Color = Black,Font = "Roboto",FontSize = 14,FontStyle = "Regular",HTextAlign = "Center",Position = {42,210},Size = {364,6}})
 
 ColorStyle = props["Color Mode"].Value == "Pre-defined Options" and "ComboBox" or "Text"
 
@@ -82,22 +84,22 @@ elseif props["Operation Mode"].Value == "Predefined Left/Right" then
 end
 
 LabelIndexPos = {
-  {57,214},
-  {250,214},
-  {57,348},
-  {250,348}
+  {57,234},
+  {250,234},
+  {57,368},
+  {250,368}
 }
 LabelButtonPos = {
-  {42,256},
-  {236,256},
-  {42,390},
-  {236,390}
+  {42,276},
+  {236,276},
+  {42,410},
+  {236,410}
 }
 ButtonPos = {
-  {93,243},
-  {287,243},
-  {93,377},
-  {287,377}
+  {93,263},
+  {287,263},
+  {93,397},
+  {287,397}
 }
 
 for i = 1, 4 do

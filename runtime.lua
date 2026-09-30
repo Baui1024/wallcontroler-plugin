@@ -110,12 +110,14 @@ end
 
 function Connect()
   if ValidateIP(Controls.IP.String) then 
+    local headers = {["X-Api-Key"] = Controls.Token.String}
     Socket:Connect(
       SocketProtocol, 
       Controls.IP.String,
-      SocketUrl,
+      SocketUrl, 
       SocketPort,
-      nil
+      nil,
+      headers
     )
   else 
     Socket:Close()
